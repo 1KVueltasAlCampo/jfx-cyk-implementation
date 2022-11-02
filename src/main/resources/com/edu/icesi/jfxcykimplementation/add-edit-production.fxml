@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="582.0" prefWidth="772.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <TextField fx:id="tfHeadOfProduction" layoutX="177.0" layoutY="116.0" prefHeight="26.0" prefWidth="295.0" />
+      <Label layoutX="506.0" layoutY="168.0" text="Production's body" />
+      <Button layoutX="506.0" layoutY="253.0" mnemonicParsing="false" onAction="#addBodyOfProduction" text="Add production's body" />
+      <Label fx:id="lbTitle" layoutX="348.0" layoutY="39.0" text="Label">
+         <font>
+            <Font name="System Bold" size="30.0" />
+         </font>
+      </Label>
+      <Label layoutX="50.0" layoutY="120.0" text="Production's head" />
+      <TableView layoutX="50.0" layoutY="168.0" prefHeight="374.0" prefWidth="424.0" />
+      <TextField fx:id="txBodyOfProduction" layoutX="506.0" layoutY="204.0" />
+      <Button layoutX="506.0" layoutY="300.0" mnemonicParsing="false" onAction="#deleteBodyOfProduction" text="Delete production's body" />
+      <Button layoutX="506.0" layoutY="517.0" mnemonicParsing="false" onAction="#loadInitialTable" text="Back" />
+   </children>
+</AnchorPane>
