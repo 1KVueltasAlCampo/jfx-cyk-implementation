@@ -18,9 +18,11 @@
          </font>
       </Label>
       <Label layoutX="50.0" layoutY="120.0" text="Production's head" />
-      <TableView layoutX="50.0" layoutY="168.0" prefHeight="374.0" prefWidth="424.0" />
-      <TextField fx:id="txBodyOfProduction" layoutX="506.0" layoutY="204.0" />
+      <TableView fx:id="tvBodies" layoutX="50.0" layoutY="168.0" prefHeight="374.0" prefWidth="424.0" />
+      <TextField fx:id="tfBodyOfProduction" layoutX="506.0" layoutY="204.0" />
       <Button layoutX="506.0" layoutY="300.0" mnemonicParsing="false" onAction="#deleteBodyOfProduction" text="Delete production's body" />
-      <Button layoutX="506.0" layoutY="517.0" mnemonicParsing="false" onAction="#loadInitialTable" text="Back" />
+      <Button layoutX="690.0" layoutY="516.0" mnemonicParsing="false" onAction="#loadInitialTable" text="Back" />
+      <Button fx:id="btnEditProduction" disable="true" layoutX="506.0" layoutY="516.0" mnemonicParsing="false" onAction="#editProduction" text="Edit production" visible="false" />
+      <Button fx:id="btnAddProduction" disable="true" layoutX="506.0" layoutY="516.0" mnemonicParsing="false" onAction="#addProduction" text="Add production" visible="false" />
    </children>
 </AnchorPane>

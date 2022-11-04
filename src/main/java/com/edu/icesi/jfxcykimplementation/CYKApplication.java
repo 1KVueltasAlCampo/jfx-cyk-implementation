@@ -43,6 +43,6 @@ public class CYKApplication extends Application {
      * @param args The command line parameters
      */
     public static void main(String[] args) {
-        launch();
+        launch(args);
     }
 }
