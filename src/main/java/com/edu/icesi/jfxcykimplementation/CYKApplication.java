@@ -62,5 +62,7 @@ public class CYKApplication extends Application {
         grammar.add(new String[]{"BA", "a"});
         String string = "bbab";
         CYKAlgorithm algorithm = new CYKAlgorithm(grammar,heads,'S',string);
+        algorithm.watchMatrix();
+        System.out.println("La cadena esta: "+algorithm.confirmStringInGrammar());
     }
 }
