@@ -1,6 +1,8 @@
 package com.edu.icesi.jfxcykimplementation;
 
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -12,10 +14,12 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
+import javafx.util.Callback;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 
 public class FXController {
 
@@ -29,38 +33,15 @@ public class FXController {
     private TextField tfStringToEvaluate;
 
     @FXML
-    private Label lbTitle;
-
-    @FXML
     private TextField tfHeadOfProduction;
-
-    @FXML
-    private TextField tfBodyOfProduction;
-
-    @FXML
-    private TableView<BodyP> tvBodies;
-
-    @FXML
-    private Button btnAddProduction;
-
-    @FXML
-    private Button btnEditProduction;
-
-    private ObservableList<BodyP> tempBodies;
 
     private Production tempProduction;
 
     private ObservableList<Production> productions;
 
     public FXController(){
-        List<BodyP> tempList = new ArrayList<>();
-        setTempBodies(tempList);
         List<Production> productionsList = new ArrayList<>();
         productions = FXCollections.observableArrayList(productionsList);
-    }
-
-    private void setTempBodies(List<BodyP> bodies){
-        tempBodies = FXCollections.observableArrayList(bodies);
     }
 
     public void loadInitialTable() throws IOException {
@@ -71,34 +52,6 @@ public class FXController {
         mainPanel.setCenter(managerPane);
     }
 
-    @FXML
-    void loadInitialTable(ActionEvent event) throws IOException {
-        loadInitialTable();
-    }
-
-    public void loadBodiesOfProduction(int option, String headOfProduction) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("add-edit-production.fxml"));
-        fxmlLoader.setController(this);
-        Parent managerPane = fxmlLoader.load();
-        fillHeadTextField(option, headOfProduction);
-        changeTitle(option);
-        showButton(option);
-        createTableOfBodies();
-        mainPanel.setCenter(managerPane);
-    }
-
-    private void createTableOfBodies(){
-        List<TableColumn<BodyP, String>> columns = new ArrayList<>();
-        TableColumn<BodyP, String> bodies = new TableColumn<>("Bodies of Production");
-        bodies.setCellValueFactory(
-                new PropertyValueFactory<BodyP,String>("bodyOfProduction")
-        );
-        columns.add(bodies);
-        ObservableList<TableColumn<BodyP, String>> observableList = FXCollections.observableArrayList(columns);
-        tvBodies.getColumns().addAll(observableList);
-        tvBodies.setItems(tempBodies);
-    }
-
     private void createTableOfProductions(){
         List<TableColumn<Production, String>> columns = new ArrayList<>();
         TableColumn<Production, String> heads = new TableColumn<>("Head");
@@ -107,69 +60,44 @@ public class FXController {
         );
         columns.add(heads);
         TableColumn<Production, String> bodies = new TableColumn<>("Bodies");
-        bodies.setCellValueFactory(
-                new PropertyValueFactory<Production, String>("bodiesString")
-        );
+
+        TableColumn<Production, TextField> body1 = new TableColumn<Production, TextField>("Body");
+        body1.setCellValueFactory(createArrayValueFactory(Production::getBodies, 0));
+
+        TableColumn<Production, TextField> body2 = new TableColumn<Production, TextField>("Body");
+        body2.setCellValueFactory(createArrayValueFactory(Production::getBodies, 1));
+        bodies.getColumns().addAll(body1, body2);
         columns.add(bodies);
+
         ObservableList<TableColumn<Production, String>> observableList = FXCollections.observableArrayList(columns);
         tvMainTable.getColumns().addAll(observableList);
         tvMainTable.setItems(productions);
     }
 
-    private void showButton(int option){
-        switch (option){
-            case 1: //Add production
-                btnAddProduction.setDisable(false);
-                btnAddProduction.setVisible(true);
-                break;
-            case 2: //Edit production
-                btnEditProduction.setDisable(false);
-                btnEditProduction.setVisible(true);
-                break;
-        }
-    }
-    private void changeTitle(int option){
-        switch (option){
-            case 1: //Add production
-                lbTitle.setText("Add Production");
-                break;
-            case 2: //Edit production
-                lbTitle.setText("Edit Production");
-                break;
-        }
-        lbTitle.setMaxWidth(Double.MAX_VALUE);
-        AnchorPane.setLeftAnchor(lbTitle, 0.0);
-        AnchorPane.setRightAnchor(lbTitle, 0.0);
-        lbTitle.setAlignment(Pos.CENTER);
-    }
-
-    private void fillHeadTextField(int option, String headOfProduction){
-        if(option == 2){ //If the user wants to edit the production
-            tfHeadOfProduction.setText(headOfProduction);
-        }
-    }
-
     @FXML
     void addPro(ActionEvent event) throws IOException {
-        List<BodyP> tempList = new ArrayList<>();
-        setTempBodies(tempList);
-        loadBodiesOfProduction(1, null);
+        String headOfProduction = tfHeadOfProduction.getText();
+        if(headOfProduction.equals("")){ //Checks if the production head is empty
+            showWarningAlert(null, null, "Please enter the head of the production");
+        }else if(searchProduction(headOfProduction) != -1){
+            showWarningAlert(null, null, "The " + headOfProduction + " production head already exists");
+        }else if(headOfProduction.contains(" ")){
+            showWarningAlert(null, null, "Enter the production head without blanket spaces");
+        }else{
+            Production temp = new Production(headOfProduction);
+            productions.add(temp);
+        }
+
     }
 
     @FXML
     void deleteProduction(ActionEvent event) {
-
-    }
-
-    @FXML
-    void editPro(ActionEvent event) throws IOException {
         if(tvMainTable.getSelectionModel().getSelectedItems().size() == 0) {
-            showWarningAlert(null, null, "Select the production you want to edit");
+            showWarningAlert(null, null, "Select the production you want to delete");
         }else{
-            Production productionToEdit = tvMainTable.getSelectionModel().getSelectedItems().get(0);
-            setTempBodies(productionToEdit.getBodies());
-            tempProduction = productionToEdit;
-            loadBodiesOfProduction(2, productionToEdit.getHead());
+            tvMainTable.getItems().removeAll(
+                    tvMainTable.getSelectionModel().getSelectedItems()
+            );
         }
     }
 
@@ -178,82 +106,11 @@ public class FXController {
 
     }
 
-    @FXML
-    void addBodyOfProduction(ActionEvent event) {
-        String bodyOfProduction = tfBodyOfProduction.getText();
-        if(bodyOfProduction.equals("")){ //Checks if the production's body is empty
-            showWarningAlert(null, null, "Please enter the body of the production");
-        }else if(searchBodyOfProduction(bodyOfProduction) != -1){ //Checks if the production's body exists
-            showWarningAlert(null, null, "You have already entered the body of production " + bodyOfProduction);
-        }else if(bodyOfProduction.contains(" ")){ //Checks if there are a blank space
-            showWarningAlert(null, null, "Enter the production's body without blank spaces");
-        }else{
-            tempBodies.add(
-                    new BodyP(bodyOfProduction)
-            );
-            tfBodyOfProduction.clear();
-        }
-    }
-
-    @FXML
-    void deleteBodyOfProduction(ActionEvent event) {
-        if(tvBodies.getSelectionModel().getSelectedItems().size() == 0) {
-            showWarningAlert(null, null, "Select the production's body you want to delete");
-        }else {
-            tvBodies.getItems().removeAll(
-                    tvBodies.getSelectionModel().getSelectedItems()
-            );
-        }
-    }
-
-    @FXML
-    void addProduction(ActionEvent event) throws IOException {
-        String headOfProduction = tfHeadOfProduction.getText();
-        if(checkProduction(headOfProduction)){
-            Production production = new Production(headOfProduction, tempBodies);
-            productions.add(production);
-            loadInitialTable();
-        }
-    }
-
-    @FXML
-    void editProduction(ActionEvent event) {
-
-    }
-
-    private boolean checkProduction(String headOfproduction){
-        boolean allIsFine = true;
-        System.out.println(headOfproduction);
-        if(headOfproduction.equals("")){ //Checks if the production's name is empty
-            showWarningAlert(null, null, "Please enter the head of the production");
-            allIsFine = false;
-        }else if(searchProduction(headOfproduction) != -1){ //Checks if the production's name is unique
-            showWarningAlert(null, null, "There is already a production with the head " + headOfproduction + ". Please enter another");
-            allIsFine = false;
-        }else if(tempBodies.size() == 0){ //Checks if there is at least one production's body
-            showWarningAlert(null, null, "Please enter at least one production's body");
-            allIsFine = false;
-        }
-        return allIsFine;
-    }
-
     private int searchProduction(String headOfProduction){
         int index = -1;
         boolean found = false;
         for(int i = 0; i < productions.size() && !found; i++){
             if(headOfProduction.equals(productions.get(i).getHead())){
-                index = i;
-                found = true;
-            }
-        }
-        return index;
-    }
-
-    private int searchBodyOfProduction(String bodyOfProduction){
-        int index = -1;
-        boolean found = false;
-        for(int i = 0; i < tempBodies.size() && !found; i++){
-            if(bodyOfProduction.equals(tempBodies.get(i).getBodyOfProduction())){
                 index = i;
                 found = true;
             }
@@ -293,30 +150,18 @@ public class FXController {
 
         private String head;
 
-        private List<BodyP> bodies;
+        private TextField[] bodies;
 
-        private String bodiesString;
-
-        private Production(String headP, List<BodyP> bodiesP){
+        private Production(String headP){
             head = headP;
-            bodies = bodiesP;
-            createRepresentationOfBodies();
-        }
-
-        private void createRepresentationOfBodies(){
-            bodiesString = "";
-            for(int i = 0; i < bodies.size()-1; i++){
-                bodiesString += bodies.get(i).getBodyOfProduction() + " | ";
+            bodies = new TextField[2];
+            for (int i = 0; i < bodies.length; i++){
+                bodies[i] = new TextField();
             }
-            bodiesString += bodies.get(bodies.size()-1).getBodyOfProduction();
         }
 
-        public List<BodyP> getBodies() {
+        public TextField[] getBodies() {
             return bodies;
-        }
-
-        public String getBodiesString() {
-            return bodiesString;
         }
 
         public String getHead() {
@@ -324,16 +169,23 @@ public class FXController {
         }
     }
 
-    public static class BodyP{
-        private SimpleStringProperty bodyOfProduction;
-
-        private BodyP(String bodyOfP){
-            this.bodyOfProduction = new SimpleStringProperty(bodyOfP);
+    //Retrieve from https://stackoverflow.com/questions/52244810/how-to-fill-tableviews-column-with-a-values-from-an-array
+    /**
+     * Creates a SimpleObjectProperty for each of the elements of an array <br>
+     * @param <S> The class that has the array as an attribute
+     * @param <T> The class of the array
+     * @param arrayExtractor The method of the class S that returns the array type T
+     * @param index the index of the value to which you want to create the SimpleObjectproperty
+     * @return Null if the index is greater than the length of the array or the array is null. The SimpleObjectProperty if the index is less than or equal to the length of the array
+     */
+    static <S, T> Callback<TableColumn.CellDataFeatures<S, T>, ObservableValue<T>> createArrayValueFactory(Function<S, T[]> arrayExtractor, final int index) {
+        if (index < 0) {
+            return cd -> null;
         }
-
-        public String getBodyOfProduction() {
-            return bodyOfProduction.get();
-        }
+        return cd -> {
+            T[] array = arrayExtractor.apply(cd.getValue());
+            return array == null || array.length <= index ? null : new SimpleObjectProperty<>(array[index]);
+        };
     }
 
 }
