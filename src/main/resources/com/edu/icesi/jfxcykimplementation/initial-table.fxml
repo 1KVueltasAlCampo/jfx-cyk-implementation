@@ -11,7 +11,7 @@
    <children>
       <TableView fx:id="tvMainTable" layoutX="40.0" layoutY="116.0" prefHeight="398.0" prefWidth="517.0" />
       <Button layoutX="580.0" layoutY="188.0" mnemonicParsing="false" onAction="#addPro" text="Add production" />
-      <Button layoutX="580.0" layoutY="242.0" mnemonicParsing="false" onAction="#deleteProduction" text="Delete production" />
+      <Button fx:id="btnDelete" layoutX="580.0" layoutY="242.0" mnemonicParsing="false" onAction="#deleteProduction" text="Delete production" />
       <TextField fx:id="tfStringToEvaluate" layoutX="580.0" layoutY="437.0" />
       <Label layoutX="580.0" layoutY="396.0" text="Enter the string " />
       <Button layoutX="580.0" layoutY="488.0" mnemonicParsing="false" onAction="#runCYK" text="Run CYK" />

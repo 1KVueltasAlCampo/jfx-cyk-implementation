@@ -27,6 +27,8 @@ public class FXController {
     private BorderPane mainPanel;
 
     @FXML
+    private Button btnDelete;
+    @FXML
     private TableView<Production> tvMainTable;
 
     @FXML
@@ -44,39 +46,46 @@ public class FXController {
         productions = FXCollections.observableArrayList(productionsList);
     }
 
+
+
     public void loadInitialTable() throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("initial-table.fxml"));
         fxmlLoader.setController(this);
         Parent managerPane = fxmlLoader.load();
         createTableOfProductions();
+        btnDelete.getStyleClass().add("critical_button");
         mainPanel.setCenter(managerPane);
     }
 
     private void createTableOfProductions(){
+        double prefWithOfTV = tvMainTable.getPrefWidth();
+        double percentageH = 0.09;
+        double percentageB = 0.9;
         List<TableColumn<Production, String>> columns = new ArrayList<>();
         TableColumn<Production, String> heads = new TableColumn<>("Head");
         heads.setCellValueFactory(
-                new PropertyValueFactory<Production, String>("head")
+                new PropertyValueFactory<Production, String>("representationHead")
         );
+        heads.setStyle("-fx-alignment: CENTER-RIGHT;");
+        heads.setPrefWidth(percentageH*prefWithOfTV);
         columns.add(heads);
         TableColumn<Production, String> bodies = new TableColumn<>("Bodies");
-
-        TableColumn<Production, TextField> body1 = new TableColumn<Production, TextField>("Body");
-        body1.setCellValueFactory(createArrayValueFactory(Production::getBodies, 0));
-
-        TableColumn<Production, TextField> body2 = new TableColumn<Production, TextField>("Body");
-        body2.setCellValueFactory(createArrayValueFactory(Production::getBodies, 1));
-        bodies.getColumns().addAll(body1, body2);
+        bodies.setCellValueFactory(
+                new PropertyValueFactory<Production, String>("bodies")
+        );
+        bodies.setStyle("-fx-alignment: CENTER-LEFT;");
+        bodies.setPrefWidth(percentageB*prefWithOfTV);
         columns.add(bodies);
 
         ObservableList<TableColumn<Production, String>> observableList = FXCollections.observableArrayList(columns);
+        tvMainTable.getStyleClass().add("no_header");
         tvMainTable.getColumns().addAll(observableList);
         tvMainTable.setItems(productions);
     }
 
     @FXML
     void addPro(ActionEvent event) throws IOException {
-        String headOfProduction = tfHeadOfProduction.getText();
+        String headOfProduction = tfHeadOfProduction.getText().toUpperCase();
         if(headOfProduction.equals("")){ //Checks if the production head is empty
             showWarningAlert(null, null, "Please enter the head of the production");
         }else if(searchProduction(headOfProduction) != -1){
@@ -103,7 +112,17 @@ public class FXController {
 
     @FXML
     void runCYK(ActionEvent event) {
+        String[] headsOfProductions = new String[productions.size()];
+        ArrayList<String[]> bodiesOfProductions = new ArrayList<>();
 
+        for(int i = 0; i < productions.size(); i++){
+            headsOfProductions[i] = productions.get(i).getHead();
+            String[] tempBodies = productions.get(i).getBodies().getText().split("|");
+            for(int j = 0; j < tempBodies.length; j++){
+                tempBodies[j] = tempBodies[j].trim();
+            }
+            bodiesOfProductions.add(tempBodies);
+        }
     }
 
     private int searchProduction(String headOfProduction){
@@ -150,42 +169,27 @@ public class FXController {
 
         private String head;
 
-        private TextField[] bodies;
+        private String representationHead;
+
+        private TextField bodies;
 
         private Production(String headP){
-            head = headP;
-            bodies = new TextField[2];
-            for (int i = 0; i < bodies.length; i++){
-                bodies[i] = new TextField();
-            }
+            head = headP.toUpperCase();
+            representationHead = head + " ->";
+            bodies = new TextField();
         }
 
-        public TextField[] getBodies() {
+        public TextField getBodies() {
             return bodies;
         }
 
         public String getHead() {
             return head;
         }
-    }
 
-    //Retrieve from https://stackoverflow.com/questions/52244810/how-to-fill-tableviews-column-with-a-values-from-an-array
-    /**
-     * Creates a SimpleObjectProperty for each of the elements of an array <br>
-     * @param <S> The class that has the array as an attribute
-     * @param <T> The class of the array
-     * @param arrayExtractor The method of the class S that returns the array type T
-     * @param index the index of the value to which you want to create the SimpleObjectproperty
-     * @return Null if the index is greater than the length of the array or the array is null. The SimpleObjectProperty if the index is less than or equal to the length of the array
-     */
-    static <S, T> Callback<TableColumn.CellDataFeatures<S, T>, ObservableValue<T>> createArrayValueFactory(Function<S, T[]> arrayExtractor, final int index) {
-        if (index < 0) {
-            return cd -> null;
+        public String getRepresentationHead() {
+            return representationHead;
         }
-        return cd -> {
-            T[] array = arrayExtractor.apply(cd.getValue());
-            return array == null || array.length <= index ? null : new SimpleObjectProperty<>(array[index]);
-        };
     }
 
 }
