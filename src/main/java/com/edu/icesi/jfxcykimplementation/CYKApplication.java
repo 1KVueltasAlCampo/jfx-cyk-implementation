@@ -5,6 +5,7 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -33,6 +34,8 @@ public class CYKApplication extends Application {
             root = fxmlLoader.load();
             guiController.loadInitialTable();
             Scene scene = new Scene(root);
+            scene.getStylesheets().add(getClass().getResource("style.css").toExternalForm());
+            stage.getIcons().add(new Image(getClass().getResourceAsStream("icon.png")));
             stage.setScene(scene);
             stage.setTitle("CYK Implementation");
             stage.show();
