@@ -1,5 +1,6 @@
 package com.edu.icesi.jfxcykimplementation;
 
+import com.edu.icesi.jfxcykimplementation.model.CYKAlgorithm;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableValue;
@@ -112,16 +113,23 @@ public class FXController {
 
     @FXML
     void runCYK(ActionEvent event) {
-        String[] headsOfProductions = new String[productions.size()];
-        ArrayList<String[]> bodiesOfProductions = new ArrayList<>();
+        String stringToEvaluate = tfStringToEvaluate.getText();
+        if(stringToEvaluate.equals("")){ //Checks if the string is empty
+            showWarningAlert(null, null, "Please enter the string to evaluate");
+        }else {
+            ArrayList<String> headsOfProductions = new ArrayList<>();
+            ArrayList<String[]> bodiesOfProductions = new ArrayList<>();
 
-        for(int i = 0; i < productions.size(); i++){
-            headsOfProductions[i] = productions.get(i).getHead();
-            String[] tempBodies = productions.get(i).getBodies().getText().split("|");
-            for(int j = 0; j < tempBodies.length; j++){
-                tempBodies[j] = tempBodies[j].trim();
+            for(int i = 0; i < productions.size(); i++){
+                headsOfProductions.add(productions.get(i).getHead());
+                String[] tempBodies = productions.get(i).getBodies().getText().split("|");
+                for(int j = 0; j < tempBodies.length; j++){
+                    tempBodies[j] = tempBodies[j].trim();
+                }
+                bodiesOfProductions.add(tempBodies);
             }
-            bodiesOfProductions.add(tempBodies);
+
+            CYKAlgorithm algorithm = new CYKAlgorithm(bodiesOfProductions, headsOfProductions,'S', stringToEvaluate);
         }
     }
 
