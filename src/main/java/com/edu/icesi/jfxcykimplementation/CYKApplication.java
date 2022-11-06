@@ -1,5 +1,6 @@
 package com.edu.icesi.jfxcykimplementation;
 
+import com.edu.icesi.jfxcykimplementation.model.CYKAlgorithm;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -8,6 +9,7 @@ import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class CYKApplication extends Application {
 
@@ -46,6 +48,22 @@ public class CYKApplication extends Application {
      * @param args The command line parameters
      */
     public static void main(String[] args) {
-        launch(args);
+        testALaFuerzaBorrarDespues();
+        //launch(args);
+    }
+
+    private static void testALaFuerzaBorrarDespues(){
+        ArrayList<String[]> grammar = new ArrayList<>();
+        ArrayList<String> heads = new ArrayList<>();
+        heads.add("S");
+        grammar.add(new String[]{"BA", "AC"});
+        heads.add("A");
+        grammar.add(new String[]{"CC", "b"});
+        heads.add("B");
+        grammar.add(new String[]{"AB", "a"});
+        heads.add("C");
+        grammar.add(new String[]{"BA", "a"});
+        String string = "bbab";
+        CYKAlgorithm algorithm = new CYKAlgorithm(grammar,heads,'S',string);
     }
 }
