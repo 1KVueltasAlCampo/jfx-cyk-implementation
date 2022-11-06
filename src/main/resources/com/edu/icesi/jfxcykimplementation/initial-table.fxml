@@ -10,8 +10,7 @@
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="582.0" prefWidth="772.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <TableView fx:id="tvMainTable" layoutX="40.0" layoutY="116.0" prefHeight="398.0" prefWidth="517.0" />
-      <Button layoutX="580.0" layoutY="116.0" mnemonicParsing="false" onAction="#addPro" text="Add production" />
-      <Button layoutX="581.0" layoutY="180.0" mnemonicParsing="false" onAction="#editPro" text="Edit production" />
+      <Button layoutX="580.0" layoutY="188.0" mnemonicParsing="false" onAction="#addPro" text="Add production" />
       <Button layoutX="580.0" layoutY="242.0" mnemonicParsing="false" onAction="#deleteProduction" text="Delete production" />
       <TextField fx:id="tfStringToEvaluate" layoutX="580.0" layoutY="437.0" />
       <Label layoutX="580.0" layoutY="396.0" text="Enter the string " />
@@ -21,5 +20,7 @@
             <Font name="System Bold" size="30.0" />
          </font>
       </Label>
+      <TextField fx:id="tfHeadOfProduction" layoutX="578.0" layoutY="143.0" prefHeight="26.0" prefWidth="126.0" />
+      <Label layoutX="578.0" layoutY="116.0" text="Production's head" />
    </children>
 </AnchorPane>
