@@ -49,7 +49,7 @@ public class CYKApplication extends Application {
      */
     public static void main(String[] args) {
         testALaFuerzaBorrarDespues();
-        //launch(args);
+        launch(args);
     }
 
     private static void testALaFuerzaBorrarDespues(){

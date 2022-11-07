@@ -47,5 +47,13 @@
 .text-field{
     -fx-border-radius: 20px;
     -fx-background-radius: 20px;
+    -fx-border-color: gray;
+}
+
+.choice-box{
+    -fx-border-radius: 20px;
+    -fx-background-radius: 20px;
+    -fx-background-color: white;
+    -fx-border-color: gray;
 }
 
