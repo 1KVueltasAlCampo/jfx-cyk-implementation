@@ -47,7 +47,7 @@ public class CYKAlgorithm {
     private String findValue(String value){
         String results = "";
         for(int i=0;i<grammar.size();i++){
-            for(int j=0;j<CONTENTS_SIZE;j++){
+            for(int j=0;j<grammar.get(i).length;j++){
                 String valueFound = grammar.get(i)[j];
                 if(valueFound.equals(value) && !results.contains(valueFound)){
                     results += heads.get(i)+",";
@@ -68,15 +68,19 @@ public class CYKAlgorithm {
                 results+=findValue(values[i])+",";
             }
         }
+        /*
         if(results.length()>0){
             results=results.substring(0,results.length()-1);
         }
+        */
         return results;
     }
 
     private String fusion(String first,String second){
         String result = "";
-        if(first!=null && second!=null){
+        first = first.replaceAll("^\\s*","");
+        second = second.replaceAll("^\\s*","");
+        if(first!=null && second!=null && !first.equals("") && !second.equals("")){
             String[] firstArray = first.split(",");
             String[] secondArray = second.split(",");
             for(int i=0;i<firstArray.length;i++){
@@ -93,13 +97,13 @@ public class CYKAlgorithm {
 
     private void fillMatrixIndex(){
         int size = stringLength;
-        for(int i = 0;i<=size;i++,size--){
+        for(int i = 0;i<=size;i++){
             int count = 1;
             for(int k = size;k>0;k--){
                 int times = 0;
                 for(int j = count;j<size;j++){
-                    //System.out.println(i+""+j+" = "+i+(stringLength-k)+" "+(count+i)+times);
-                    fillIndexes(i+""+j,i+""+(size-k)+(count+i)+times);
+                    System.out.println(i+""+j+" = "+i+(stringLength-k)+" "+(count+i)+times);
+                    fillIndexes(i+""+j,i+"-"+(size-k)+"-"+(count+i)+"-"+times);
                     //System.out.println(indexes.get(i+""+j));
                     times++;
                 }
@@ -114,7 +118,7 @@ public class CYKAlgorithm {
             for(int i=0;i<stringLength-j;i++){
                 String result = indexes.get(i+""+j);
                 matrix[i][j] = generateMatrixValue(result);
-                //System.out.println(i+""+j);
+                System.out.println("index "+i+" "+j);
             }
         }
     }
@@ -124,20 +128,22 @@ public class CYKAlgorithm {
         if(result!=null){
             String[] resultArray = result.split(",");
             for(int i=0;i<resultArray.length;i++){
-                int i1Index = Integer.parseInt(String.valueOf(resultArray[i].charAt(0)));
-                int j1Index = Integer.parseInt(String.valueOf(resultArray[i].charAt(1)));
-                int i2Index = Integer.parseInt(String.valueOf(resultArray[i].charAt(2)));
-                int j2Index = Integer.parseInt(String.valueOf(resultArray[i].charAt(3)));
+                String[] indexArray = resultArray[i].split("-");
+                int i1Index = Integer.parseInt(String.valueOf(indexArray[0]));
+                int j1Index = Integer.parseInt(String.valueOf(indexArray[1]));
+                int i2Index = Integer.parseInt(String.valueOf(indexArray[2]));
+                int j2Index = Integer.parseInt(String.valueOf(indexArray[3]));
                 String first = matrix[i1Index][j1Index];
                 String second = matrix[i2Index][j2Index];
-                //System.out.println("individuals:"+first+" "+second);
+                System.out.println("Matrix "+i1Index+","+j1Index+" "+i2Index+","+j2Index);
+                System.out.println("individuals: 1."+first+" 2."+second);
                 String valueToSearch = fusion(first,second);
-                //System.out.println("fusion: "+valueToSearch);
+                System.out.println("fusion: "+valueToSearch);
                 if(!matrixValue.contains(findMultipleValues(valueToSearch))){
                     matrixValue += findMultipleValues(valueToSearch);
                 }
                 matrixValue =  matrixValue.replaceAll("(.)\\1", "$1");
-                //System.out.println("founded:"+matrixValue);
+                System.out.println("founded:"+matrixValue);
             }
         }
         return matrixValue;
@@ -156,7 +162,7 @@ public class CYKAlgorithm {
     public void watchMatrix(){
         for(int i=0;i<stringLength;i++){
             for(int j=0;j<stringLength;j++){
-                System.out.print(matrix[i][j]+" ");
+                System.out.print(matrix[i][j]+". ");
             }
             System.out.println("");
         }

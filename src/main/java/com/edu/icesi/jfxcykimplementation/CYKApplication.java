@@ -48,7 +48,7 @@ public class CYKApplication extends Application {
      * @param args The command line parameters
      */
     public static void main(String[] args) {
-        testALaFuerzaBorrarDespues();
+        testALaFuerzaBorrarDespues2();
         launch(args);
     }
 
@@ -64,6 +64,36 @@ public class CYKApplication extends Application {
         heads.add("C");
         grammar.add(new String[]{"BA", "a"});
         String string = "bbab";
+        CYKAlgorithm algorithm = new CYKAlgorithm(grammar,heads,'S',string);
+        algorithm.watchMatrix();
+        System.out.println("La cadena esta: "+algorithm.confirmStringInGrammar());
+    }
+
+    private static void testALaFuerzaBorrarDespues2(){
+        ArrayList<String[]> grammar = new ArrayList<>();
+        ArrayList<String> heads = new ArrayList<>();
+        heads.add("S");
+        grammar.add(new String[]{"IB"});
+        heads.add("I");
+        grammar.add(new String[]{"AX", "AJ","a"});
+        heads.add("J");
+        grammar.add(new String[]{"YZ", "BZ","AK","a"});
+        heads.add("K");
+        grammar.add(new String[]{"AK", "a"});
+        heads.add("A");
+        grammar.add(new String[]{"a"});
+        heads.add("B");
+        grammar.add(new String[]{"b"});
+        heads.add("C");
+        grammar.add(new String[]{"c"});
+        heads.add("X");
+        grammar.add(new String[]{"IA"});
+        heads.add("Y");
+        grammar.add(new String[]{"BJ"});
+        heads.add("Z");
+        grammar.add(new String[]{"CC"});
+        String string = "aaaabbaccccaaab";
+        //String string = "abccb";
         CYKAlgorithm algorithm = new CYKAlgorithm(grammar,heads,'S',string);
         algorithm.watchMatrix();
         System.out.println("La cadena esta: "+algorithm.confirmStringInGrammar());
