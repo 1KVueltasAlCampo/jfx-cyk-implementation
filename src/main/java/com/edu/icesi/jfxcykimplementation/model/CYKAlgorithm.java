@@ -60,6 +60,12 @@ public class CYKAlgorithm {
         return results;
     }
 
+
+    /**
+     * <br> Performs the process of finding a value in a variable for all combinations of the position of an array. <br><br>
+     * @param value The values sought. They can be terminals or variables
+     * @return The variables that returns the searched values
+     */
     private String findMultipleValues(String value){
         String results = "";
         String[] values = value.split(",");
@@ -68,14 +74,17 @@ public class CYKAlgorithm {
                 results+=findValue(values[i])+",";
             }
         }
-        /*
-        if(results.length()>0){
-            results=results.substring(0,results.length()-1);
-        }
-        */
         return results;
     }
 
+
+    //
+    /**
+     * <br> Joins the values of two sets <br><br>
+     * @param first The first set
+     * @param second The second set
+     * @return The merge of the sets
+     */
     private String fusion(String first,String second){
         String result = "";
         first = first.replaceAll("^\\s*","");
@@ -95,6 +104,9 @@ public class CYKAlgorithm {
         return result;
     }
 
+    /**
+     * <br> Places the combinations between indexes of the matrices in the respective places. <br><br>
+     */
     private void fillMatrixIndex(){
         int size = stringLength;
         for(int i = 0;i<=size;i++){
@@ -102,9 +114,7 @@ public class CYKAlgorithm {
             for(int k = size;k>0;k--){
                 int times = 0;
                 for(int j = count;j<size;j++){
-                    System.out.println(i+""+j+" = "+i+(stringLength-k)+" "+(count+i)+times);
                     fillIndexes(i+""+j,i+"-"+(size-k)+"-"+(count+i)+"-"+times);
-                    //System.out.println(indexes.get(i+""+j));
                     times++;
                 }
                 count++;
@@ -113,16 +123,25 @@ public class CYKAlgorithm {
         }
     }
 
+
+    /**
+     * <br> Fill in the matrix by making the necessary combinations for each index.
+     */
     private void fillMatrix(){
         for(int j =1;j<stringLength;j++){
             for(int i=0;i<stringLength-j;i++){
                 String result = indexes.get(i+""+j);
                 matrix[i][j] = generateMatrixValue(result);
-                System.out.println("index "+i+" "+j);
             }
         }
     }
 
+
+    /**
+     * <br> Extracts the indices of the combinations, merges the sets and searches in the grammar for the variables that generate the obtained merge.
+     * @param result The combination of indices obtained from the combination matrix
+     * @return The variable(s) that contain the merge of the sets
+     */
     private String generateMatrixValue(String result){
         String matrixValue="";
         if(result!=null){
@@ -135,20 +154,22 @@ public class CYKAlgorithm {
                 int j2Index = Integer.parseInt(String.valueOf(indexArray[3]));
                 String first = matrix[i1Index][j1Index];
                 String second = matrix[i2Index][j2Index];
-                System.out.println("Matrix "+i1Index+","+j1Index+" "+i2Index+","+j2Index);
-                System.out.println("individuals: 1."+first+" 2."+second);
                 String valueToSearch = fusion(first,second);
-                System.out.println("fusion: "+valueToSearch);
                 if(!matrixValue.contains(findMultipleValues(valueToSearch))){
                     matrixValue += findMultipleValues(valueToSearch);
                 }
                 matrixValue =  matrixValue.replaceAll("(.)\\1", "$1");
-                System.out.println("founded:"+matrixValue);
             }
         }
         return matrixValue;
     }
 
+    /**
+     * <br> Creates a dictionary with the combinations of the indexes
+     * @param key The index containing the combination
+     * @param value The combination
+     * @return The variable(s) that contain the merge of the sets
+     */
     private void fillIndexes(String key,String value){
         if(indexes.get(key)!=null){
             String contained = indexes.get(key);
@@ -159,15 +180,10 @@ public class CYKAlgorithm {
         }
     }
 
-    public void watchMatrix(){
-        for(int i=0;i<stringLength;i++){
-            for(int j=0;j<stringLength;j++){
-                System.out.print(matrix[i][j]+". ");
-            }
-            System.out.println("");
-        }
-    }
-
+    /**
+     * <br> Checks if the chain can be arrived at from the first element of the grammar
+     * @return True if the grammar contains the string, false if not
+     */
     public boolean confirmStringInGrammar(){
         if(matrix[0][stringLength-1].contains(startupChar+"")){
             return true;
